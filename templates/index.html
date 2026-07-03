@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FakeNews">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon-192.png') }}">
+</head>
+
+<body>
+
+<div class="wrapper">
+<div class="container">
+   <button onclick="toggleDarkMode()" class="dark-toggle" id="themeBtn">🌙</button>
+
+    <h1>📰 Fake News Detector</h1>
+
+   <form action="/predict" method="post" class="chat-input" onsubmit="showLoader()">
+     <div id="loader" class="loader"></div>
+         <textarea name="news" placeholder="Paste news here..." required></textarea>
+         <label>
+             <input type="checkbox" name="use_verification" value="true"> Use AI-powered websearch verification
+         </label>
+         <button type="submit" class="primary">🚀 Analyze News</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result 
+        {% if prediction == 'Fake News' %}
+            fake
+        {% else %}
+            real
+        {% endif %}
+    ">
+        <h2>{{ prediction }}</h2>
+        <p>Confidence: {{ confidence }}%</p>
+    </div>
+    {% endif %}
+
+    {% if verification %}
+    <div class="result verification-box">
+        <h2>AI Verification</h2>
+        <p>{{ verification }}</p>
+    </div>
+    {% endif %}
+
+    <div class="actions">
+        <button id="installBtn" class="primary" style="display:none;">📲 Install App</button>
+        <a href="/news"><button>🌐 Live News</button></a>
+        <a href="/logout"><button class="logout">Logout</button></a>
+    </div>
+
+</div>
+</div>
+
+<script>
+function toggleDarkMode() {
+    const body = document.body;
+    const btn = document.getElementById("themeBtn");
+
+    body.classList.toggle("dark-mode");
+
+    if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+        btn.textContent = "☀️";   // change to sun
+    } else {
+        localStorage.setItem("theme", "light");
+        btn.textContent = "🌙";   // change to moon
+    }
+}
+
+// Load saved theme
+window.onload = function() {
+    const btn = document.getElementById("themeBtn");
+
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        btn.textContent = "☀️";   // already dark → show sun
+    } else {
+        btn.textContent = "🌙";   // light mode → show moon
+    }
+}
+</script>
+
+<script>
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'inline-flex';
+    }
+});
+
+document.getElementById('installBtn')?.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log('Install prompt:', outcome);
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'none';
+    }
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if (installBtn) {
+        installBtn.style.display = 'none';
+    }
+});
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

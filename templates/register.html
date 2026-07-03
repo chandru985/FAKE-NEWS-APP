@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FakeNews">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon-192.png') }}">
+</head>
+
+<body>
+
+<div class="wrapper">
+<div class="auth-card">
+    <div class="auth-brand">
+        <div class="logo-icon">📝</div>
+        <h2>Create account</h2>
+        <p class="auth-subtitle">Get started in seconds</p>
+    </div>
+
+    <form method="POST" class="auth-form">
+        <div class="input-group" style="margin-bottom:14px;">
+            <i class="auth-icon">👤</i>
+            <input type="text" name="username" class="auth-input" placeholder="Username" required>
+        </div>
+
+        <div class="input-group" style="margin-bottom:18px;">
+            <i class="auth-icon">🔒</i>
+            <input type="password" id="password" name="password" class="auth-input" placeholder="Password" required>
+            <span class="toggle-password" onclick="togglePassword()">👁️</span>
+        </div>
+
+        <button type="submit" class="auth-btn">Register</button>
+    </form>
+
+    <div class="auth-footer">
+        <p>Already have an account? <a href="/login">Sign in</a></p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p class="flash {{ category }}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
+</div>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function(){});
+}
+
+function togglePassword() {
+    const password = document.getElementById("password");
+
+    if (password.type === "password") {
+        password.type = "text";
+    } else {
+        password.type = "password";
+    }
+}
+</script>
+</body>
+</html>
