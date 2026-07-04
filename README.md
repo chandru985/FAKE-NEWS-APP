@@ -148,4 +148,4 @@ Add screenshots of your application here.
 
 ## 📄 License
 
-This project is intended for educational and learning purposes.
+This project is intended for finding Real news or Fake news.
