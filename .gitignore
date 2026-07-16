@@ -1,0 +1,29 @@
+# System files
+.BIN/
+DumpStack.log.tmp
+pagefile.sys
+walpaper/
+Thumbs.db
+.DS_Store
+
+# Other projects
+FakeNewsApp/
+SmartCart/
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.db
+
+# Environment
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+
+# Node
+node_modules/
